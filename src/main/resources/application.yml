@@ -1,0 +1,60 @@
+spring:
+  application:
+    name : "Bot AI Module"
+
+  datasource:
+    url: "jdbc:postgresql://${DB_HOST:127.0.0.1}:${DB_PORT:5432}/${DB_CATALOG:bot_ai}"
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:postgres}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      minimumIdle: 1
+      maximum-pool-size: 30
+      idleTimeout: 10000
+      poolName: "botaiDatabaseConnectionPool"
+
+  jpa:
+    show-sql: false
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+  ai:
+    vectorstore:
+      pgvector:
+        index-type: HNSW
+        distance-type: COSINE_DISTANCE
+        dimensions: 1536
+    ollama:
+      base-url: ${OLLAMA_URL:http://localhost:11434}
+      chat:
+        options:
+          model: llama3
+    openai:
+      api-key: ${SPRING_AI_OPENAI_API_KEY}
+      embedding-api-key: ${SPRING_AI_OPENAI_API_KEY}
+      embedding:
+        options:
+          model: text-embedding-ada-002
+      base-url: https://api.openai.com
+      chat:
+        options:
+          temperature: 0.2
+          model: gpt-3.5-turbo
+
+bot-ai:
+  server: ollama
+  base-url: ${OLLAMA_URL:http://localhost:11434}
+  model: llama3
+
+server:
+  port: 8888
+
+logging:
+  level:
+    root: INFO
+    org.springframework.web: DEBUG
+    ai.datawise: DEBUG
